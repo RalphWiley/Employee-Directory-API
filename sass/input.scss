@@ -1,0 +1,55 @@
+* {
+    padding: 6px 8px;
+}
+
+body {
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 1.5em;
+    // grid-template-rows: auto;
+    grid-template-areas:
+        "header"
+        "main";
+}
+
+header {
+    grid-area: header;
+}
+
+main {
+    grid-area: main;
+}
+
+.card {
+    width: 100%;
+    height: 120px;
+    border: 1px solid lightgray;
+    display: grid;
+    grid-template-areas:
+        "image name"
+        "image email"
+        "image location";
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    padding: 10px 0;
+}
+
+#title {
+    color: lighten(black, 50%);
+    font-size: 14px;
+}
+
+.avatar {
+    grid-area: image;
+    border-radius: 50%;
+    float: left;
+}
+
+// .text-container {
+  
+// }
