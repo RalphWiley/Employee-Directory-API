@@ -23,11 +23,11 @@ function generateEmployees(data) {
         const html = `
             <section class='card' index=${index}>
             <img class='avatar' src='${result.picture.large}' alt='profile-image'>
-                <div class='text-container'>
+                
                     <h3 class='info-detail'>${result.name.first} ${result.name.last}</h3>
                     <p class='info-detail'>${result.email}</p>
                     <p class='info-detail'>${result.location.city}</p>
-                </div>
+              
             </section>
         `
         index++;

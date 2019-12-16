@@ -39,16 +39,16 @@ img {
   height: 120px;
   border: 1px solid lightgray;
   display: grid;
-  grid-template-areas: "image text" "image text" "image text";
+  grid-template-areas: "image name" "image email" "image location";
   grid-template-columns: 1fr 3fr;
   grid-template-rows: 1fr 1fr 1fr;
   padding: 10px 0;
-  background-color: white;
-  transition: background-color 1s;
+  transition: box-shadow 1s;
+  box-shadow: none;
 }
 
 .card:hover {
-  background-color: rgba(209, 255, 248, 0.8);
+  box-shadow: 1px 1px 10px;
 }
 
 .avatar {
@@ -62,6 +62,8 @@ img {
 }
 
 .info-detail {
+  grid-area: text;
+  align-self: center;
   margin-top: 0.01em;
   margin-bottom: 0.01em;
 }
@@ -69,7 +71,7 @@ img {
 h3.info-detail {
   grid-area: name;
   align-self: end;
-  padding-top: 20px;
+  padding-top: 25px;
   padding-bottom: 5px;
 }
 
@@ -81,9 +83,8 @@ p:first-of-type.info-detail {
 
 p:last-of-type.info-detail {
   grid-area: location;
-  align-self: flex-start;
   color: #aaa9a9;
-  padding-bottom: 20px;
+  padding-bottom: 25px;
 }
 
 #modal-btn {
