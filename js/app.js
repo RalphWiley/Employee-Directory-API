@@ -1,3 +1,4 @@
+const title = document.getElementById('title');
 const employeeList = document.querySelector('.grid-container');
 const url = 'https://randomuser.me/api/?results=12';
 const list = [];
@@ -8,7 +9,6 @@ const myModal = document.createElement('div');
 modal.className = 'modal';
 closeBtn.id = 'closeBtn';
 myModal.className = 'my-modal';
-
 
 fetch(url)
     .then(response => response.json())
@@ -23,16 +23,44 @@ function generateEmployees(data) {
         const html = `
             <section class='card' index=${index}>
             <img class='avatar' src='${result.picture.large}' alt='profile-image'>
-                <h3 class='info-detail'>${result.name.first} ${result.name.last}</h3>
-                <p class='info-detail'>${result.email}</p>
-                <p class='info-detail'>${result.location.city}</p>
+                <div class='text-container'>
+                    <h3 class='info-detail'>${result.name.first} ${result.name.last}</h3>
+                    <p class='info-detail'>${result.email}</p>
+                    <p class='info-detail'>${result.location.city}</p>
+                </div>
             </section>
         `
         index++;
         list.push(result);
         employeeList.innerHTML += html;
-    })
-};
+    });
+}
+
+function generateModal(index){
+    const main = document.querySelector('main');
+    const employee = list[index]; 
+    // console.log(employee.dob.date.toLocaleString().substring(0, 10));
+    let birthday = employee.dob.date.toLocaleString().substring(0, 10);
+    const html = `
+        <div class='modalContent'>
+            <img class='modal-avatar' src='${employee.picture.large}' alt = 'profile-image'>
+            <div class='modal-info'>
+                <h3>${employee.name.first} ${employee.name.last}</h3>
+                <p>${employee.email}</p>
+                <p>${employee.location.city}</p>
+                <hr style="border:none;">
+                <p>${employee.cell}</p>
+                <p>${employee.location.street.number} ${employee.location.street.name} ${employee.location.state} ${employee.location.postcode}</p>
+                <p>Birthday: ${birthday}</p>
+            </div>
+        </div>
+    `;
+    main.appendChild(modal);
+    closeBtn.innerHTML = '&times';
+    myModal.innerHTML = html;
+    modal.appendChild(myModal);
+    modal.appendChild(closeBtn);
+}
 // ------------------------------------------
 //  FETCH FUNCTIONS
 // ------------------------------------------
@@ -55,30 +83,49 @@ function checkStatus(response) {
     }
 }
 
-// function generateCard() {
-//     const div =`
-//     <div class='card'></div>
-//   `;
-//   main.push(div);
-   
-// }
-
-function generateImage(data) {
-    const html = `
-    <img src='${data}' alt>
-    <p>Click to view images of ${select.value}s</p>
-  `;
-    card.innerHTML = html;
+function getIndex(e) {
+    if (e.target.className === 'card') {
+        return e.target.getAttribute('index');
+    } else if (e.target.parentNode.className === 'card') {
+        return e.target.parentNode.getAttribute('index');
+    }
 }
 
-// function fetchEmployeeImage() {
-//     const person = select.value;
-//     const img = card.querySelector('img');
+function createModal(e) {
+    const modal = document.querySelector('.modal');
+    let personIndex = getIndex(e);
+    generateModal(personIndex);
+    return generateModal;
+}
 
-//     fetchData('')
-//         .then(data => {
-//             img.src = data.message;
-//             img.alt = person;
-//         })
-    
-// }
+function openModal() {
+    myModal.style.display = 'block';
+    closeBtn.style.display = 'block';
+}
+
+function closeModal() {
+    myModal.style.display = 'none';
+    closeBtn.style.display = 'none';
+}
+
+
+function outsideClose(e) {
+    if (e.target === myModal) {
+        closeModal();
+    }
+}
+
+// Events
+
+employeeList.addEventListener('click', (e) => {
+    if (e.target.className === 'card' || e.target.className === 'avatar' || e.target.className === 'info-detail') {
+        createModal(e);
+        openModal();
+    }
+});
+
+closeBtn.addEventListener('click', closeModal);
+
+window.addEventListener('click', outsideClose);
+
+document.addEventListener('keydown', closeModal);
