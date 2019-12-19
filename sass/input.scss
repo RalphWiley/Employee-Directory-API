@@ -1,179 +1,166 @@
-$align-center: center;
-$info-color: rgb(170, 169, 169);
-$font-size: 1.2em;
+$modal-color: rgb(160, 160, 160);
+$rgb100: rgb(100, 100, 100);
+
+* {
+  font-family: 'Open Sans', sans-serif;
+}
 
 body {
-    max-width: 90%;
-    margin: 0 auto;
-    padding: 20px 20px;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 1.4em;
+  color: rgb(100, 100, 100);
 }
 
 .grid-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-gap: 1.5em;
-    grid-template-areas:
-        "header"
-        "main";
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 30%));
+  grid-gap: 20px 25px;
+  justify-content: center;
 }
 
-header {
-    grid-area: header;
+.employee-card {
+  display: flex;
+  align-items: center;
+  line-height: 0.6em;
+  border: 1px solid rgb(210, 210, 210);
+  border-radius: 5px;
+  height: 120px;
+  padding: 10px 0;
+  transition: box-shadow .5s;
+  box-shadow: none;
 }
 
-main {
-    grid-area: main;
+.employee-card:hover {
+  box-shadow: 1px 1px 5px black;
 }
 
-img {
-    display: block;
-    border-radius: 50%;
-    height: 100px;
-    width: 100px;
-    text-align: $align-center;
-    margin: auto 20px;
+.employee-thumbnail {
+  border-radius: 50%;
+  padding: 20px;
+  width: 100px;
+  height: 100px;
 }
 
-#title {
-    color: lighten(black, 50%);
-    font-size: 14px;
-    letter-spacing: 2px;
+.employee-name, .employee-email, .employee-city {
+  padding-left: 20px;
 }
 
-// card
-.card {
-    width: 100%;
-    height: 120px;
-    border: 1px solid lightgray;
-    display: grid;
-    grid-template-areas:
-        "image name"
-        "image email"
-        "image location";
-    grid-template-columns: 1fr 3fr;
-    grid-template-rows: 1fr 1fr 1fr;
-    padding: 10px 0;
-    transition: box-shadow 1s;
-    box-shadow: none;
+.employee-name {
+  font-size: 1em;
+  color: $rgb100;
 }
 
-.card:hover {
-    box-shadow: 1px 1px 10px;
+.employee-email, .employee-city {
+  font-size: 0.75em;
+  color: $modal-color;
 }
 
-.avatar {
-    grid-area: image;
-    align-self: $align-center;
-}
-
-.text-container {
-    grid-area: text;
-    align-self: $align-center;
-}
-
-// text container
-.info-detail {
-    grid-area: text;
-    align-self: $align-center;
-    margin-top: 0.01em;
-    margin-bottom: 0.01em;
-}
-
-h3.info-detail {
-    grid-area: name;
-    align-self: end;
-    padding-top: 25px;
-    padding-bottom: 5px;
-}
-
-p:first-of-type.info-detail  {
-    grid-area: email;
-    align-self: $align-center;
-    color: $info-color;
-}
-
-p:last-of-type.info-detail  {
-    grid-area: location;
-    color: $info-color;
-    padding-bottom: 25px;
-}
-
-// Modal
-
-#modal-btn{
-  border: none;
-  background: white;
-}
-
-#modal-btn:focus{
-  outline-style: none;
-}
-
-.my-modal {
+.modal-container {
   position: fixed;
-  background-color: rgba(73, 71, 71, 0.6);
   top: 0;
   right: 0;
-  left: 0;
   bottom: 0;
-  display: block;
-  text-align: center;
+  left: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  margin: 0 auto;
 }
 
-.modalContent {
-  background-color:whitesmoke;
-  margin: 150px auto;
-  width: 25%;
-  padding: 2em;
-  color: gray;
-  text-align: center;
-  border-radius: 10px;
-  font-size: $font-size;
-}
-
-.modal-info h3 {
-  color: lighten(black, 25%);
-  font-size: $font-size;
-  margin-bottom: -5px;
-}
-
-.modal-info p:nth-of-type(2){
-    margin-top: -5px;
-}
-
-.modal-info {
-  font-size: 0.8em;
-  color: rgb(170, 169, 169);
-}
-
-hr {
-   margin-right: auto;
-   margin-left: auto;
-   opacity: 0.6;
-   width: 80%;
-   height: 1px;
-   background-color:#666;
-   margin-top: 20px;
-   margin-bottom: 20px;
-}
-
-#closeBtn {
+.modal {
   position: absolute;
-  top: 160px;
-  right: 37%;
-  font-size: 1.6em;
-
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 30%;
+  height: 420px;
+  margin: auto;
+  padding-top: 60px;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 5px;
+  border: 1px solid rgba(100, 100, 100, 0.3);
+  transition: .6s ease-out;     
 }
 
-#closeBtn:hover,
-#closeBtn:focus {
-  color: black;
+.modal-info-container {
+  text-align: center;
+}
+
+.modal-info-container hr {
+  width: 80%;
+  border: solid 0.5px lighten($modal-color, 25%);
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.modal-info-container h3 {
+  color: $rgb100;
+}
+
+.modal-info-container p {
+  color: $modal-color;
+  font-size: 0.8em;
+}
+
+.modal-img {
+  border-radius: 50%;
+}
+
+.modal-close-x {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  color: $rgb100;
+  font-size: 1.5rem;
+}
+
+.modal-close-x:hover {
   cursor: pointer;
 }
 
-.modalContent img {
-  display: block;
-  margin: 0 auto;
-  height: 200px;
+#next-btn, #prev-btn {
+  color: $rgb100;
+  font-size: 16px;
+}
+
+#next-btn:hover, #prev-btn:hover {
+  cursor: pointer;
+}
+
+#next-btn {
+  float: right;
+  padding-right: 15px;
+}
+
+#prev-btn {
+  float: left;
+  padding-left: 15px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 45px;
+}
+
+#searchbar {
   width: 200px;
+  height: 20px;
+  border-radius: 5px;
+  border: 1px solid $rgb100;
+  padding: 15px 10px;
+}
+
+#searchbar:focus {
+  outline: 0;
+  border: 2px solid black;
+}
+
+.hidden {
+  display: none;
 }

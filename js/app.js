@@ -1,131 +1,120 @@
-const title = document.getElementById('title');
+
 const employeeList = document.querySelector('.grid-container');
-const url = 'https://randomuser.me/api/?results=12';
-const list = [];
-let index = 0;
-const modal = document.createElement('div');
-const closeBtn = document.createElement('span');
-const myModal = document.createElement('div');
-modal.className = 'modal';
-closeBtn.id = 'closeBtn';
-myModal.className = 'my-modal';
+const url = 'https://randomuser.me/api/?results=12&nat=GB,US,AU,FR,CA';
+const search = document.getElementById('searchbar');
 
-fetch(url)
-    .then(response => response.json())
-    .then(data => {
-        generateEmployees(data.results);
-        console.log(data.results);
-    })
+// Variable to store info for all 12 employees
+// Variable to store info for all 12 employees
+let employees = {};
 
 
-function generateEmployees(data) {
-    data.map(result => {
-        const html = `
-            <section class='card' index=${index}>
-            <img class='avatar' src='${result.picture.large}' alt='profile-image'>
-                
-                    <h3 class='info-detail'>${result.name.first} ${result.name.last}</h3>
-                    <p class='info-detail'>${result.email}</p>
-                    <p class='info-detail'>${result.location.city}</p>
-              
-            </section>
-        `
-        index++;
-        list.push(result);
-        employeeList.innerHTML += html;
+// Function that fetches employees, url must point to randomuser API
+function fetchEmployees(url) {
+    return fetch(url)
+        .then(data => data.json())
+        .then(data => {
+            employees = data.results; // stores employee data in 'employees' variable
+            return data.results;
+        })
+        .then(data => generateEmployeeCards(data))
+        .catch(err => console.error(`We're sorry, there was an error fetching your data: ${err.name}`));
+}
+
+fetchEmployees('https://randomuser.me/api/?results=12&nat=US'); // Call fetchEmployees on page load
+
+
+// Function that generates employee card
+function generateEmployeeCards(data) {
+    data.forEach(person => employeeList.innerHTML += `
+    <div class="employee-card">
+        <div>
+            <img class="employee-thumbnail" src="${person.picture.large}" alt="${person.name.first}'s profile picture">
+        </div>
+        <div>
+            <h3 class="employee-name">${person.name.first} ${person.name.last}</h3>
+            <p class="employee-email">${person.email}</p>
+            <p class="employee-city">${person.location.city}</p>
+        </div>
+    </div>
+    `);
+
+    // Setting up event listener for each employee card, so that modal opens when clicked
+    document.querySelectorAll('.employee-card').forEach((card, index) => {
+        card.addEventListener('click', () => {
+            // code to call modal function will go here
+            generateModal(employees, employees[index], index);
+        });
     });
 }
 
-function generateModal(index){
-    const main = document.querySelector('main');
-    const employee = list[index]; 
-    // console.log(employee.dob.date.toLocaleString().substring(0, 10));
-    let birthday = employee.dob.date.toLocaleString().substring(0, 10);
-    const html = `
-        <div class='modalContent'>
-            <img class='modal-avatar' src='${employee.picture.large}' alt = 'profile-image'>
-            <div class='modal-info'>
-                <h3>${employee.name.first} ${employee.name.last}</h3>
-                <p>${employee.email}</p>
-                <p>${employee.location.city}</p>
-                <hr style="border:none;">
-                <p>${employee.cell}</p>
-                <p>${employee.location.street.number} ${employee.location.street.name} ${employee.location.state} ${employee.location.postcode}</p>
-                <p>Birthday: ${birthday}</p>
-            </div>
+
+// Function to generate modal of clicked employee
+const generateModal = (employees, employee, index) => {
+    const modalContainer = document.querySelector('.modal-container');
+    const dob = new Date(Date.parse(employee.dob.date)).toLocaleDateString(navigator.language); // Formats date depending on users locale.
+
+    modalContainer.innerHTML = `
+      <div class="modal">
+        <div class="modal-info-container">
+          <span class='modal-close-x'>x</span>
+          <img class="modal-img" src="${employee.picture.large}" alt="${employee.name.first}'s profile picture">
+          <h3 id="name" class="modal-name cap">${employee.name.first} ${employee.name.last}</h3>
+          <p class="modal-text">${employee.email}</p>
+          <p class="modal-text cap"><span id='prev-btn'><</span><span class="city">${employee.location.city}</span><span id='next-btn'>></span></p><hr>
+          <p class="modal-text">${employee.phone}</p>
+          <p class="modal-text cap">${employee.location.street.number} ${employee.location.street.name}, ${employee.location.state} ${employee.location.postcode}</p>
+          <p class="modal-text">Birthday: ${dob}</p>
         </div>
+      </div>
     `;
-    main.appendChild(modal);
-    closeBtn.innerHTML = '&times';
-    myModal.innerHTML = html;
-    modal.appendChild(myModal);
-    modal.appendChild(closeBtn);
-}
-// ------------------------------------------
-//  FETCH FUNCTIONS
-// ------------------------------------------
 
-function fetchData(url) {
-    return fetch(url)
-        .then(checkStatus)
-        .then(res => res.json())
-        .catch(error => console.log('Looks like there was a problem!', error))
-}
+    modalContainer.style.display = 'block';
 
-// ------------------------------------------
-//  HELPER FUNCTIONS
-// ------------------------------------------
-function checkStatus(response) {
-    if (response.ok) {
-        return Promise.resolve(response);
-    } else {
-        return Promise.reject(new Error(response.statusText));
+
+    // Closes modal when 'x' is clicked
+    const modalX = document.querySelector('.modal-close-x');
+
+    modalX.addEventListener('click', () => {
+        modalContainer.style.display = 'none';
+    })
+
+
+    // Changes to previous or next employee when 'prev' or 'next' button is clicked
+    const nextBtn = modalContainer.querySelector('#next-btn');
+    const prevBtn = modalContainer.querySelector('#prev-btn');
+
+    nextBtn.addEventListener('click', () => {
+        generateModal(employees, employees[index + 1], index + 1);
+    });
+
+    prevBtn.addEventListener('click', () => {
+        generateModal(employees, employees[index - 1], index - 1);
+    });
+
+
+    // 'Prev' button disappears when first employee is selected, 'Next' button disappears when last employee is selected.
+    if (index == 0) {
+        prevBtn.innerHTML = '';
+        document.querySelector('.city').style.paddingLeft = '43px';
+    } else if (index == employees.length - 1) {
+        nextBtn.innerHTML = '';
+        document.querySelector('.city').style.paddingRight = '43px';
     }
-}
+};
 
-function getIndex(e) {
-    if (e.target.className === 'card') {
-        return e.target.getAttribute('index');
-    } else if (e.target.parentNode.className === 'card') {
-        return e.target.parentNode.getAttribute('index');
-    }
-}
+// search box
 
-function createModal(e) {
-    const modal = document.querySelector('.modal');
-    let personIndex = getIndex(e);
-    generateModal(personIndex);
-    return generateModal;
-}
+search.addEventListener('keyup', () => {
+    const input = search.value.toUpperCase();
+    let cards = employeeList.querySelectorAll('.employee-card');
 
-function openModal() {
-    myModal.style.display = 'block';
-    closeBtn.style.display = 'block';
-}
+    cards.forEach((person) => {
+        const name = person.childNodes[3].childNodes[1].innerText.toUpperCase();
 
-function closeModal() {
-    myModal.style.display = 'none';
-    closeBtn.style.display = 'none';
-}
-
-
-function outsideClose(e) {
-    if (e.target === myModal) {
-        closeModal();
-    }
-}
-
-// Events
-
-employeeList.addEventListener('click', (e) => {
-    if (e.target.className === 'card' || e.target.className === 'avatar' || e.target.className === 'info-detail') {
-        createModal(e);
-        openModal();
-    }
-});
-
-closeBtn.addEventListener('click', closeModal);
-
-window.addEventListener('click', outsideClose);
-
-document.addEventListener('keydown', closeModal);
+        if(!name.includes(input)){
+            person.classList.add('hidden');
+        } else {
+            person.classList.remove('hidden');
+        }
+    })
+})
