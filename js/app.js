@@ -4,7 +4,6 @@ const url = 'https://randomuser.me/api/?results=12&nat=GB,US,AU,FR,CA';
 const search = document.getElementById('searchbar');
 
 // Variable to store info for all 12 employees
-// Variable to store info for all 12 employees
 let employees = {};
 
 
